@@ -83,7 +83,7 @@ d3.csv('data.csv').then((data) => {
                 const name = d3.select(this).text()
                 const s = d3.selectAll('line')
                 .style('opacity', function(o) {
-                    return o.source.id == name || o.target.id == name ? '1' : '0.5'
+                    return o.source.id == name || o.target.id == name ? '0.9' : '0.5'
                 })
                 .style('stroke-width', function(o) {
                     return o.source.id == name || o.target.id == name ? '2' : '1'
@@ -113,7 +113,7 @@ d3.csv('data.csv').then((data) => {
     var simulation = d3.forceSimulation(nodes)
   .force('charge', d3.forceManyBody().strength(-100))
   .force('center', d3.forceCenter(width / 2, height / 2))
-  .force('link', d3.forceLink().distance(150).links(data))
+  .force('link', d3.forceLink().distance(175).links(data))
   .on('tick', ticked);
 
   let iter = 0;
@@ -206,6 +206,8 @@ function updateNodes() {
 function ticked() {
   updateNodes()
   updateLinks()
+
+  svg.selectAll('text').sort(1)
 }
 
 
