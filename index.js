@@ -42,8 +42,8 @@ d3.csv('data.csv').then((data) => {
         return {
             "id": name,
             index: i,
-            x: getRandomBetween(width/3, width*2/3),
-            y: getRandomBetween(height/3, height*2/3)
+            x: width/2,
+            y: height/2
         }
     })
 
@@ -63,9 +63,18 @@ d3.csv('data.csv').then((data) => {
             .on('mouseover', function(d) {
                 // d3.select(this).style('fill', 'black')
                 console.log(d)
-                let adj = data.filter((o) => o.source.id == d.id || o.target.id == d.id)
-                adj = adj.map(o => o.target.id)
+                // let adj = data.filter((o) => o.source.id == d.id || o.target.id == d.id)
+                let adj = []
+                data.forEach((o) => {
+                  if (o.source.id == d.id) {
+                    adj.push(o.target.id)
+                  } 
+                  if (o.target.id == d.id) {
+                    adj.push(o.source.id)
+                  }
+                })
                 adj.push(d.id)
+                console.log(adj)
                 
                 
                 d3.selectAll('text').style('fill', function(o) {
@@ -154,16 +163,16 @@ function updateLinks() {
             .style("fill", function(d){ return colors(d)})
 
         // Add one dot in the legend for each name.
-        svg.selectAll("mylabels")
+        svg.selectAll(".labels")
             .data(plotNames)
             .enter()
             .append("text")
                 .attr("x", width - 100)
                 .attr("y", function(d,i){ return 100 + i*25}) // 100 is where the first dot appears. 25 is the distance between dots
-                .style("fill", function(d){ return colors(d)})
                 .text(function(d){ return d})
                 .attr("text-anchor", "left")
                 .style("alignment-baseline", "middle")
+                .style("fill", function(d){ return colors(d)})
     }
   
     u.exit().remove()
@@ -195,8 +204,8 @@ function updateNodes() {
 }
 
 function ticked() {
-  updateLinks()
   updateNodes()
+  updateLinks()
 }
 
 
