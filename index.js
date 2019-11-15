@@ -51,7 +51,7 @@ d3.csv('data.csv').then((data) => {
         .attr('width', width)
         .attr('height', height)
 
-    const nameNodes = svg.selectAll('circle')
+    const nameNodes = svg.selectAll('text')
         .data(nodes)
         .enter()
         .append('text')
@@ -59,7 +59,35 @@ d3.csv('data.csv').then((data) => {
             .attr('y', d => d.y)
             .text(d => d.id)
             .style('font-size', '14pt')
-            .style('color', 'steelblue')
+            .style('fill', '#ccc')
+            .on('mouseover', function(d) {
+                // d3.select(this).style('fill', 'black')
+                console.log(d)
+                let adj = data.filter((o) => o.source.id == d.id || o.target.id == d.id)
+                adj = adj.map(o => o.target.id)
+                adj.push(d.id)
+                
+                
+                d3.selectAll('text').style('fill', function(o) {
+                    return adj.includes(o.id) || o.id == d.id ? 'black' : '#ccc'
+                })
+                const name = d3.select(this).text()
+                const s = d3.selectAll('line')
+                .style('opacity', function(o) {
+                    return o.source.id == name || o.target.id == name ? '1' : '0.5'
+                })
+                .style('stroke-width', function(o) {
+                    return o.source.id == name || o.target.id == name ? '2' : '1'
+                })
+
+            })
+            .on('mouseout', function() {
+                d3.selectAll('text').style('fill', '#ccc')
+                d3.selectAll('line')
+                    .transition()
+                    .style('opacity', '0.5')
+                    .style('stroke-width', '1')
+            })
 
         
 
@@ -112,7 +140,8 @@ function updateLinks() {
         iter++
         return colors(d.source.id)
     })
-    .style('opacity', 0.8)
+    .style('opacity', 0.5)
+    .style('pointer-events', 'none')
     
     if (iter == data.length) {
         svg.selectAll("mydots")
